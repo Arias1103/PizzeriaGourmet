@@ -1,10 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
+
 
 import React from 'react';
 import {
@@ -17,6 +11,8 @@ import {
   TextInput,
   ActivityIndicator
 } from 'react-native';
+ import {createAppContainer} from 'react-navigation'
+ import {createStackNavigator} from 'react-navigation-stack'
 
 import bgImage from './src/ImagePizza/backG.jpeg'
  
@@ -43,7 +39,7 @@ class App extends React.Component {
    <View style={styles.container}>
       <View>
          <TouchableHighlight style={styles.logIn} onPress={this.handlePress}>
-         <Text style={styles.buttonT}> Log In </Text>
+         <Text style={styles.buttonT}> Sign In </Text>
          </TouchableHighlight>
       </View>
 
