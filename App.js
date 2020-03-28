@@ -15,21 +15,10 @@ import {
  import {createStackNavigator} from 'react-navigation-stack'
 
 import bgImage from './src/ImagePizza/backG.jpeg'
- 
-class App extends React.Component {
-  state ={
-    visible: false,
-  }
 
- handlePress =()=> {
-  this.setState({visible: !this.state.visible})
- 
- }
-  
-  render() {
+const sign =({navigation}) => {
   return (
-
-  <ImageBackground source={bgImage} style={styles.backgroundContainer}> 
+    <ImageBackground source={bgImage} style={styles.backgroundContainer}> 
 
      <View style={styles.container}>
        <Text style={styles.title}> Pizzeria Gourmet </Text>
@@ -38,30 +27,53 @@ class App extends React.Component {
 
    <View style={styles.container}>
       <View>
-         <TouchableHighlight style={styles.logIn} onPress={this.handlePress}>
-         <Text style={styles.buttonT}> Sign In </Text>
+         <TouchableHighlight style={styles.logIn} onPress={()=>navigation.push('Registro')}>
+         <Text style={styles.buttonT}> Registrarse </Text>
          </TouchableHighlight>
       </View>
 
       <View>
-         <TouchableHighlight style={{...styles.logIn, backgroundColor:'#123E9C'}} onPress={this.handlePress}>
-         <Text style={{...styles.buttonT, color: 'white'}}> In with facebook </Text>
+         <TouchableHighlight style={{...styles.logIn, backgroundColor:'#123E9C'}} onPress={()=>navigation.push('Registro')}>
+         <Text style={{...styles.buttonT, color: 'white'}}> Entrar con facebook </Text>
          </TouchableHighlight>
       </View>
    </View>
-
-     <Modal animationType='slide' visible={this.state.visible}>
-         <View style={styles.container}> 
-            <TouchableHighlight style={styles.logIn} onPress={this.handlePress}>
-             <Text style={styles.buttonT}> back </Text>
-            </TouchableHighlight> 
-         </View>
-      </Modal>
-
   </ImageBackground>
+
   )
-  }
 }
+
+sign.navigationOptions = {
+  title: 'Home',
+  headerStyle: {
+    backgroundColor: '#FCF3CF'
+  },
+ headerTintColor: '#222'
+}
+  const formulario =({navigation})=>{  
+   return(
+     
+         <View style={styles.container}> 
+           <TextInput  placeholder='Usuario'/>
+         </View>
+   )
+  }
+
+ formulario.navigationOptions ={
+   title: 'Registro'
+ }
+
+  const AppNavigator  = createStackNavigator({
+    Home:{
+      screen: sign
+    },
+    Registro: {
+      screen: formulario
+    },
+  },{initialRouteName: 'Home'})
+
+  export default createAppContainer(AppNavigator)
+  
 
 styles = StyleSheet.create({
   logIn:{
@@ -105,5 +117,3 @@ textAlign: 'center'
     paddingTop: 5,
   }
 })
-
-export default App;
