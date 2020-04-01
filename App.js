@@ -34,7 +34,7 @@ const sign =({navigation}) => {
 
       <View>
          <TouchableHighlight style={{...styles.logIn, backgroundColor:'#123E9C'}} onPress={()=>navigation.push('Registro')}>
-         <Text style={{...styles.buttonT, color: 'white'}}> Entrar con facebook </Text>
+         <Text style={{...styles.buttonT, color: 'white'}}> facebook </Text>
          </TouchableHighlight>
       </View>
    </View>
@@ -46,9 +46,9 @@ const sign =({navigation}) => {
 sign.navigationOptions = {
   title: 'Home',
   headerStyle: {
-    backgroundColor: '#FCF3CF'
+    backgroundColor: '#123E9C'
   },
- headerTintColor: '#222'
+ headerTintColor: 'white'
 }
   const formulario =({navigation})=>{  
    return(
@@ -76,19 +76,19 @@ sign.navigationOptions = {
   
 
 styles = StyleSheet.create({
-  logIn:{
-  height: 70,
-  width: 300,
-  padding: 15,
-  borderRadius: 50,
-  backgroundColor: 'white',
-  justifyContent: 'center',
-  marginVertical: 5
+ logIn:{
+    height: 70,
+    width: 300,
+    padding: 15,
+    borderRadius: 50,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    marginVertical: 5
   },
   buttonT: {
-color: 'blue',
-fontSize: 30,
-textAlign: 'center'
+    color: 'blue',
+    fontSize: 30,
+    textAlign: 'center'
   },
   subTitle:{
     color: 'white',
