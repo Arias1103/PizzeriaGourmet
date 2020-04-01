@@ -9,23 +9,25 @@ import {
   TouchableHighlight,
   Modal,
   TextInput,
-  ActivityIndicator
+  ActivityIndicator,
+  Image
 } from 'react-native';
  import {createAppContainer} from 'react-navigation'
  import {createStackNavigator} from 'react-navigation-stack'
 
-import bgImage from './src/ImagePizza/backG.jpeg'
+import bgImage from './src/ImagePizza/backG4.jpeg'
+import logo from './src/ImagePizza/logo.jpeg'
 
 const sign =({navigation}) => {
   return (
     <ImageBackground source={bgImage} style={styles.backgroundContainer}> 
 
-     <View style={styles.container}>
-       <Text style={styles.title}> Pizzeria Gourmet </Text>
-       <Text style={styles.subTitle}> Restuarante Italiano</Text>
-     </View>
-
    <View style={styles.container}>
+       <View style={styles.logoContainer}>
+           <Image source={logo} style={styles.logo} />
+           <Text style={styles.logoText}>Hazlo Gourmet</Text>
+       </View>
+   
       <View>
          <TouchableHighlight style={styles.logIn} onPress={()=>navigation.push('Registro')}>
          <Text style={styles.buttonT}> Registrarse </Text>
@@ -46,16 +48,25 @@ const sign =({navigation}) => {
 sign.navigationOptions = {
   title: 'Home',
   headerStyle: {
-    backgroundColor: '#123E9C'
+    backgroundColor: 'white'
   },
- headerTintColor: 'white'
+ headerTintColor: 'black'
 }
   const formulario =({navigation})=>{  
    return(
-     
-         <View style={styles.container}> 
-           <TextInput  placeholder='Usuario'/>
-         </View>
+    <View style={styles.container}> 
+      <View style={styles.logoContainer}>
+          <Image source={logo} style={styles.logo} />
+          <Text style={styles.logoText}>Hazlo Gourmet</Text>
+       </View>
+          <TextInput style={styles.form} placeholder='E-mail'/>
+          <TextInput style={styles.form} placeholder='Contraseña'
+           secureTextEntry={true}
+          />
+          <TouchableHighlight style={styles.formButton}>
+              <Text style={styles.formText}> Registrar </Text>
+          </TouchableHighlight>
+    </View>
    )
   }
 
@@ -76,6 +87,45 @@ sign.navigationOptions = {
   
 
 styles = StyleSheet.create({
+ logoText:{
+  color: 'black',
+  fontSize: 30,
+  fontWeight: '500',
+  marginTop: 10,
+  opacity: 0.5
+ },
+ logo:{
+ width: 200,
+ height: 200,
+ borderRadius: 100
+ },
+ logoContainer:{
+   alignItems: 'center',
+   marginVertical: 20
+ },
+ formText:{
+  textAlign: 'center',
+  fontSize: 15,
+  color: 'blue'
+ },
+ formButton:{
+   height: 60,
+   width: 100,
+   justifyContent: 'center',
+   borderColor: 'black',
+   borderRadius: 50,
+   borderWidth: 2,
+   marginVertical: 20
+  },
+ form:{
+   height:70,
+   width:400,
+   borderRadius:50,
+   marginVertical: 10,
+   padding: 15,
+   borderColor: 'black',
+   borderWidth: 2
+ },
  logIn:{
     height: 70,
     width: 300,
@@ -83,22 +133,14 @@ styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: 'white',
     justifyContent: 'center',
-    marginVertical: 5
+    marginVertical: 5,
+    borderColor: 'black',
+    borderWidth:2
   },
   buttonT: {
     color: 'blue',
-    fontSize: 30,
+    fontSize: 25,
     textAlign: 'center'
-  },
-  subTitle:{
-    color: 'white',
-    fontSize: 30,
-  },
-  title: {
-   color: 'white',
-   fontSize: 50,
-   fontFamily: "AppleSDGothicNeo-Bold",
-   fontWeight: "bold"
   },
   container: {
     flex: 1,
