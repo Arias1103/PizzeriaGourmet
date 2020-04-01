@@ -1,45 +1,50 @@
 
 
-import React from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
   Text,
   ImageBackground,
   TouchableHighlight,
-  Modal,
   TextInput,
-  ActivityIndicator,
-  Image
+  Image,
+  FlatList
 } from 'react-native';
  import {createAppContainer} from 'react-navigation'
  import {createStackNavigator} from 'react-navigation-stack'
+ import {createDrawerNavigator} from 'react-navigation-drawer'
 
 import bgImage from './src/ImagePizza/backG4.jpeg'
 import logo from './src/ImagePizza/logo.jpeg'
+import peperoni from './src/ImagePizza/Peperoni.jpeg'
+import hawaiana from './src/ImagePizza/Hawaiana.jpeg'
+
+
+/* ------------- Seccion del LogIn*/
 
 const sign =({navigation}) => {
   return (
-    <ImageBackground source={bgImage} style={styles.backgroundContainer}> 
+  <ImageBackground source={bgImage} style={styles.backgroundContainer}> 
 
-   <View style={styles.container}>
+    <View style={styles.container}>
        <View style={styles.logoContainer}>
            <Image source={logo} style={styles.logo} />
            <Text style={styles.logoText}>Hazlo Gourmet</Text>
        </View>
    
-      <View>
-         <TouchableHighlight style={styles.logIn} onPress={()=>navigation.push('Registro')}>
-         <Text style={styles.buttonT}> Registrarse </Text>
-         </TouchableHighlight>
-      </View>
+       <View>
+          <TouchableHighlight style={styles.logIn} onPress={()=>navigation.push('Registro')}>
+          <Text style={styles.buttonT}> Registrarse </Text>
+          </TouchableHighlight>
+       </View>
 
-      <View>
-         <TouchableHighlight style={{...styles.logIn, backgroundColor:'#123E9C'}} onPress={()=>navigation.push('Registro')}>
-         <Text style={{...styles.buttonT, color: 'white'}}> facebook </Text>
-         </TouchableHighlight>
-      </View>
-   </View>
+       <View>
+          <TouchableHighlight style={{...styles.logIn, backgroundColor:'#123E9C'}} onPress={()=>navigation.push('Registro')}>
+          <Text style={{...styles.buttonT, color: 'white'}}> facebook </Text>
+          </TouchableHighlight>
+       </View>
+    </View>
   </ImageBackground>
 
   )
@@ -47,11 +52,12 @@ const sign =({navigation}) => {
 
 sign.navigationOptions = {
   title: 'Home',
-  headerStyle: {
+    headerStyle: {
     backgroundColor: 'white'
   },
- headerTintColor: 'black'
+    headerTintColor: 'black'
 }
+ /* ----------------------------------> Formulario de registro de usuario */
   const formulario =({navigation})=>{  
    return(
     <View style={styles.container}> 
@@ -63,7 +69,7 @@ sign.navigationOptions = {
           <TextInput style={styles.form} placeholder='Contraseña'
            secureTextEntry={true}
           />
-          <TouchableHighlight style={styles.formButton}>
+          <TouchableHighlight style={styles.formButton} onPress={()=>navigation.push('Menu')}>
               <Text style={styles.formText}> Registrar </Text>
           </TouchableHighlight>
     </View>
@@ -74,6 +80,30 @@ sign.navigationOptions = {
    title: 'Registro'
  }
 
+ /* ---------------------------------------> Seccion de Menu */
+ class principal extends Component {
+  render () {
+ ({navigation})
+   return (
+     <View style={styles.main}>
+      <FlatList 
+        data={[
+          {
+           nombre: 'peperoni',
+           source: 'peperoni',
+          },
+          {
+           nombre: 'hawaiana',
+           source: 'hawaiana'
+          }
+        ]}
+        renderItem={({item})=> <Image>{item.source}</Image>}
+      />
+     </View>
+   )
+  }
+ }
+/* ------------------------------> Seccion de React-Navigation */ 
   const AppNavigator  = createStackNavigator({
     Home:{
       screen: sign
@@ -81,12 +111,27 @@ sign.navigationOptions = {
     Registro: {
       screen: formulario
     },
+    Menu:{
+      screen: principal
+    }
   },{initialRouteName: 'Home'})
 
   export default createAppContainer(AppNavigator)
   
+/*  ------------------------------------------> StyleSheet*/
 
 styles = StyleSheet.create({
+  pizza:{
+   height: 200,
+   width: 200
+  },
+  main:{
+   width: 100,
+   height: 100, 
+   backgroundColor: 'red',
+   alignItems: 'center'
+  },
+ /* Estilos de logIn y Formulario */ 
  logoText:{
   color: 'black',
   fontSize: 30,
