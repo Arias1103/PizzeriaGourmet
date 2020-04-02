@@ -9,17 +9,13 @@ import {
   TouchableHighlight,
   TextInput,
   Image,
-  FlatList
+  FlatList,
 } from 'react-native';
  import {createAppContainer} from 'react-navigation'
  import {createStackNavigator} from 'react-navigation-stack'
- import {createDrawerNavigator} from 'react-navigation-drawer'
 
 import bgImage from './src/ImagePizza/backG4.jpeg'
 import logo from './src/ImagePizza/logo.jpeg'
-import peperoni from './src/ImagePizza/Peperoni.jpeg'
-import hawaiana from './src/ImagePizza/Hawaiana.jpeg'
-
 
 /* ------------- Seccion del LogIn*/
 
@@ -40,7 +36,7 @@ const sign =({navigation}) => {
        </View>
 
        <View>
-          <TouchableHighlight style={{...styles.logIn, backgroundColor:'#123E9C'}} onPress={()=>navigation.push('Registro')}>
+          <TouchableHighlight style={{...styles.logIn, backgroundColor:'#123E9C'}} onPress={()=>navigation.push('Menu')}>
           <Text style={{...styles.buttonT, color: 'white'}}> facebook </Text>
           </TouchableHighlight>
        </View>
@@ -81,28 +77,48 @@ sign.navigationOptions = {
  }
 
  /* ---------------------------------------> Seccion de Menu */
- class principal extends Component {
-  render () {
- ({navigation})
-   return (
-     <View style={styles.main}>
-      <FlatList 
-        data={[
-          {
-           nombre: 'peperoni',
-           source: 'peperoni',
-          },
-          {
-           nombre: 'hawaiana',
-           source: 'hawaiana'
-          }
-        ]}
-        renderItem={({item})=> <Image>{item.source}</Image>}
-      />
-     </View>
-   )
+ class principal extends Component{
+   state ={
+     loading: true,
+     users: []
+   }
+
+   constructor(props){
+     super(props)
+    this.fetchUsers()
+   }
+
+   fetchUsers = async()=>{
+     const response = await fetch('https://jsonplaceholder.typicode.com/users')
+     const pre = await response.json()
+     const users = pre.map(x=>({...x, key: x.id}))
+     this.setState({users, loading: false})
+   }
+  render(){
+    const {loading,users}=this.state
+    if(loading){
+      return (<View style={styles.containerMain}>
+        <Text>Cargando ..</Text>
+      </View>
+      )
+    }
+   return <View>
+     <FlatList data={users} renderItem={({item})=>
+      <Text>
+       {item.name},
+       {item.username}
+      </Text>}/>
+   </View>
   }
- }
+}
+principal.navigationOptions = {
+  title: 'Pizzeria gourmet',
+    headerStyle: {
+    backgroundColor: '#2e2e2e'
+  },
+    headerTintColor: 'white',
+    headerMode: 'none'
+}
 /* ------------------------------> Seccion de React-Navigation */ 
   const AppNavigator  = createStackNavigator({
     Home:{
@@ -121,16 +137,13 @@ sign.navigationOptions = {
 /*  ------------------------------------------> StyleSheet*/
 
 styles = StyleSheet.create({
-  pizza:{
-   height: 200,
-   width: 200
-  },
-  main:{
-   width: 100,
-   height: 100, 
-   backgroundColor: 'red',
+  containerMain:{
+   display: 'flex',
+   flex: 1,
+   justifyContent: 'center',
    alignItems: 'center'
   },
+  
  /* Estilos de logIn y Formulario */ 
  logoText:{
   color: 'black',
@@ -151,20 +164,17 @@ styles = StyleSheet.create({
  formText:{
   textAlign: 'center',
   fontSize: 15,
-  color: 'blue'
+  color: '#123E9C'
  },
  formButton:{
    height: 60,
    width: 100,
    justifyContent: 'center',
-   borderColor: 'black',
-   borderRadius: 50,
-   borderWidth: 2,
    marginVertical: 20
   },
  form:{
-   height:70,
-   width:400,
+   height:50,
+   width:300,
    borderRadius:50,
    marginVertical: 10,
    padding: 15,
@@ -173,7 +183,7 @@ styles = StyleSheet.create({
  },
  logIn:{
     height: 70,
-    width: 300,
+    width: 250,
     padding: 15,
     borderRadius: 50,
     backgroundColor: 'white',
@@ -183,7 +193,7 @@ styles = StyleSheet.create({
     borderWidth:2
   },
   buttonT: {
-    color: 'blue',
+    color: '#123E9C',
     fontSize: 25,
     textAlign: 'center'
   },
