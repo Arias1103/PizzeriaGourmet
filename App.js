@@ -17,6 +17,8 @@ import {
 import bgImage from './src/ImagePizza/backG4.jpeg'
 import logo from './src/ImagePizza/logo.jpeg'
 
+const Symbol =()=> <Image source={logo} style={styles.symbol}/>
+
 /* ------------- Seccion del LogIn*/
 
 const sign =({navigation}) => {
@@ -37,7 +39,7 @@ const sign =({navigation}) => {
 
        <View>
           <TouchableHighlight style={{...styles.logIn, backgroundColor:'#123E9C'}} onPress={()=>navigation.push('Menu')}>
-          <Text style={{...styles.buttonT, color: 'white'}}> facebook </Text>
+          <Text style={{...styles.buttonT, color: 'white'}}> Facebook </Text>
           </TouchableHighlight>
        </View>
     </View>
@@ -47,7 +49,7 @@ const sign =({navigation}) => {
 }
 
 sign.navigationOptions = {
-  title: 'Home',
+  title: 'Bienvenuto',
     headerStyle: {
     backgroundColor: 'white'
   },
@@ -72,15 +74,15 @@ sign.navigationOptions = {
    )
   }
 
- formulario.navigationOptions ={
+   formulario.navigationOptions ={
    title: 'Registro'
  }
 
  /* ---------------------------------------> Seccion de Menu */
- class principal extends Component{
+ class principal extends React.Component{
    state ={
      loading: true,
-     users: []
+     users: [],
    }
 
    constructor(props){
@@ -99,25 +101,29 @@ sign.navigationOptions = {
     if(loading){
       return (<View style={styles.containerMain}>
         <Text>Cargando ..</Text>
-      </View>
+        </View>
       )
     }
-   return <View>
-     <FlatList data={users} renderItem={({item})=>
+   return (
+     <ImageBackground source={bgImage} style={styles.MenuContainer}>
+   <View>
+    <Text style={styles.MenuText}> Elige tu pizza!! </Text>
+    <FlatList data={users} renderItem={({item})=>
       <Text>
-       {item.name},
-       {item.username}
+        Nombre: {item.name}
       </Text>}/>
-   </View>
+    </View>
+    </ImageBackground>
+
+   )
   }
 }
 principal.navigationOptions = {
-  title: 'Pizzeria gourmet',
+    headerTitle: <Symbol/>,
     headerStyle: {
     backgroundColor: '#2e2e2e'
   },
     headerTintColor: 'white',
-    headerMode: 'none'
 }
 /* ------------------------------> Seccion de React-Navigation */ 
   const AppNavigator  = createStackNavigator({
@@ -137,6 +143,27 @@ principal.navigationOptions = {
 /*  ------------------------------------------> StyleSheet*/
 
 styles = StyleSheet.create({
+  symbol:{
+    alignSelf: 'stretch',
+    height: 50,
+    width: 50,
+    borderRadius: 100
+  },
+  MenuContainer:{
+    flex: 1,
+    width: null,
+    height: null,
+    opacity: 10,
+    resizeMode: 'contain',
+    padding: 15
+  },
+  MenuText:{
+    color: 'black',
+    fontSize: 40,
+    fontWeight: '500',
+    marginBottom: 15,
+    opacity: 0.7
+  },
   containerMain:{
    display: 'flex',
    flex: 1,
