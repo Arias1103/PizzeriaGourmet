@@ -13,11 +13,12 @@ import {
 } from 'react-native';
  import {createAppContainer} from 'react-navigation'
  import {createStackNavigator} from 'react-navigation-stack'
+ import {FontAwesome} from '@expo/vector-icons'
 
 import bgImage from './src/ImagePizza/backG4.jpeg'
 import logo from './src/ImagePizza/logo.jpeg'
-
-const Symbol =()=> <Image source={logo} style={styles.symbol}/>
+import { createDrawerNavigator } from 'react-navigation-drawer';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 /* ------------- Seccion del LogIn*/
 
@@ -33,12 +34,12 @@ const sign =({navigation}) => {
    
        <View>
           <TouchableHighlight style={styles.logIn} onPress={()=>navigation.push('Registro')}>
-          <Text style={styles.buttonT}> Registrarse </Text>
+          <Text style={styles.buttonT}> Inicia </Text>
           </TouchableHighlight>
        </View>
 
        <View>
-          <TouchableHighlight style={{...styles.logIn, backgroundColor:'#123E9C'}} onPress={()=>navigation.push('Menu')}>
+          <TouchableHighlight style={{...styles.logIn, backgroundColor:'#123E9C'}} onPress={()=>navigation.navigate('Menu')}>
           <Text style={{...styles.buttonT, color: 'white'}}> Facebook </Text>
           </TouchableHighlight>
        </View>
@@ -67,10 +68,16 @@ sign.navigationOptions = {
           <TextInput style={styles.form} placeholder='Contraseña'
            secureTextEntry={true}
           />
-          <TouchableHighlight style={styles.formButton} onPress={()=>navigation.push('Menu')}>
-              <Text style={styles.formText}> Registrar </Text>
-          </TouchableHighlight>
-    </View>
+          <View style={styles.formIn}>
+             <TouchableHighlight style={styles.formButton} onPress={()=>navigation.navigate('Menu')}>
+                 <Text style={styles.formText}> Registrar </Text>
+             </TouchableHighlight>
+
+              <TouchableHighlight style={styles.formButton} onPress={()=>navigation.navigate('Menu')}>
+                 <Text style={styles.formText}> Entrar </Text>
+              </TouchableHighlight>
+          </View>
+     </View>
    )
   }
 
@@ -78,52 +85,57 @@ sign.navigationOptions = {
    title: 'Registro'
  }
 
- /* ---------------------------------------> Seccion de Menu */
+ /* -------------------------------------------------------------------------------------> Seccion de Menu */
  class principal extends React.Component{
    state ={
      loading: true,
-     users: [],
+     datos: [],
    }
 
    constructor(props){
      super(props)
-    this.fetchUsers()
+    this.fetchDatos()
    }
 
-   fetchUsers = async()=>{
-     const response = await fetch('https://jsonplaceholder.typicode.com/users')
+   fetchDatos = async()=>{
+     const response = await fetch('https://jsonplaceholder.typicode.com/photos')
      const pre = await response.json()
-     const users = pre.map(x=>({...x, key: x.id}))
-     this.setState({users, loading: false})
+     const datos = pre.map(x=>({...x, key: x.id}))
+     this.setState({datos, loading: false})
    }
   render(){
-    const {loading,users}=this.state
+    const {loading,datos}=this.state
     if(loading){
-      return (<View style={styles.containerMain}>
+      return (<View style={styles.containerLoad}>
         <Text>Cargando ..</Text>
         </View>
       )
     }
-   return (
-     <ImageBackground source={bgImage} style={styles.MenuContainer}>
-   <View>
-    <Text style={styles.MenuText}> Elige tu pizza!! </Text>
-    <FlatList data={users} renderItem={({item})=>
-      <Text>
-        Nombre: {item.name}
-      </Text>}/>
-    </View>
-    </ImageBackground>
+    const pressHandler = (id) => {
+      console.log(id)
+    }
+   return ( 
+  <ImageBackground source={bgImage} style={styles.MenuContainer}>
+     <View style={styles.headerMenu}>
+       <TouchableHighlight style={styles.burguerBottom} onPress={this.props.navigation.openDrawer} >
+         <FontAwesome name='bars' size={35} color='black'/>
+       </TouchableHighlight>
+     </View>
+       <View>
+        <Text style={styles.MenuText}> Elige tu pizza!! </Text>
+          <FlatList data={datos} renderItem={({item})=>
+          <TouchableOpacity style={styles.itemRender} onPress={()=> pressHandler(item.id)}>
+              <Image style={{width: 100, height: 100}} source={{uri:item.url}}/>
+              <View style={styles.description}>
+                  <Text> Pizza: {item.title}</Text>
+                  <Text> Ingredientes </Text>
+              </View>
+          </TouchableOpacity>}/>
+      </View>
+ </ImageBackground>
 
    )
   }
-}
-principal.navigationOptions = {
-    headerTitle: <Symbol/>,
-    headerStyle: {
-    backgroundColor: '#2e2e2e'
-  },
-    headerTintColor: 'white',
 }
 /* ------------------------------> Seccion de React-Navigation */ 
   const AppNavigator  = createStackNavigator({
@@ -133,71 +145,95 @@ principal.navigationOptions = {
     Registro: {
       screen: formulario
     },
-    Menu:{
-      screen: principal
-    }
   },{initialRouteName: 'Home'})
 
-  export default createAppContainer(AppNavigator)
-  
+  const RootLog = createDrawerNavigator({
+    Registro: AppNavigator,
+    Menu:{
+    screen: principal
+    }
+  })
+
+  export default createAppContainer(RootLog)
+
+
+
 /*  ------------------------------------------> StyleSheet*/
 
 styles = StyleSheet.create({
-  symbol:{
-    alignSelf: 'stretch',
-    height: 50,
-    width: 50,
-    borderRadius: 100
+   description:{
+    flexDirection: 'column', 
+    flex:1, 
+    alignItems: 'center',
+    justifyContent: 'space-around'
+
+   },
+   itemRender:{ 
+     flex:1,
+     flexDirection: 'row',
+     marginBottom: 10,
+     marginVertical: 5,
+     opacity: 0.7,
+     backgroundColor: '#E2EEE6',
+   },
+   burguerBottom:{
+    alignItems: 'flex-start',
+    marginTop: 35,
+    width: null
   },
   MenuContainer:{
     flex: 1,
-    width: null,
-    height: null,
     opacity: 10,
     resizeMode: 'contain',
-    padding: 15
+    padding: 7,
   },
   MenuText:{
-    color: 'black',
+    color: 'white',
     fontSize: 40,
     fontWeight: '500',
     marginBottom: 15,
-    opacity: 0.7
+    marginTop: 10,
+    padding: 10,
+    opacity: 0.8,
+    backgroundColor: '#343332',
+    borderRadius: 50
   },
-  containerMain:{
-   display: 'flex',
-   flex: 1,
-   justifyContent: 'center',
-   alignItems: 'center'
+  containerLoad:{
+    display: 'flex',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   
  /* Estilos de logIn y Formulario */ 
  logoText:{
-  color: 'black',
-  fontSize: 30,
-  fontWeight: '500',
-  marginTop: 10,
-  opacity: 0.5
+   color: 'black',
+   fontSize: 30,
+   fontWeight: '500',
+   marginTop: 10,
+   opacity: 0.5
  },
  logo:{
- width: 200,
- height: 200,
- borderRadius: 100
+   width: 200,
+   height: 200,
+   borderRadius: 100
  },
  logoContainer:{
-   alignItems: 'center',
-   marginVertical: 20
+    alignItems: 'center',
+    marginVertical: 20
  },
  formText:{
-  textAlign: 'center',
-  fontSize: 15,
-  color: '#123E9C'
+   textAlign: 'center',
+   fontSize: 15,
+   color: '#123E9C'
+ },
+ formIn:{
+   flexDirection: 'row'
  },
  formButton:{
    height: 60,
    width: 100,
-   justifyContent: 'center',
-   marginVertical: 20
+   marginTop:5 
   },
  form:{
    height:50,
