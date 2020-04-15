@@ -10,6 +10,8 @@ import {
   TextInput,
   Image,
   FlatList,
+  Button,
+  Alert,
 } from 'react-native';
  import {createAppContainer} from 'react-navigation'
  import {createStackNavigator} from 'react-navigation-stack'
@@ -111,20 +113,23 @@ sign.navigationOptions = {
         </View>
       )
     }
-    const pressHandler = (id) => {
-      console.log(id)
+    const pressHandler = () => {
+      Alert.alert('Pedido', 'Presiona aceptar si deseas pedir esta pizza',[
+      {text: 'Acpetar', onPress:()=>Alert.alert('Tu pedido esta en proceso')},
+      {text: 'Cancelar', onPress:()=>Alert.alert('El pedido ha sido cancelado')}
+    ])
     }
    return ( 
   <ImageBackground source={bgImage} style={styles.MenuContainer}>
      <View style={styles.headerMenu}>
-       <TouchableHighlight style={styles.burguerBottom} onPress={this.props.navigation.openDrawer} >
+       <TouchableHighlight style={styles.burguerBottom} onPress={this.props.navigation.openDrawer}>
          <FontAwesome name='bars' size={35} color='black'/>
        </TouchableHighlight>
      </View>
        <View>
         <Text style={styles.MenuText}> Elige tu pizza!! </Text>
           <FlatList data={datos} renderItem={({item})=>
-          <TouchableOpacity style={styles.itemRender} onPress={()=> pressHandler(item.id)}>
+          <TouchableOpacity style={styles.itemRender} onPress={()=> pressHandler()}>
               <Image style={{width: 100, height: 100}} source={{uri:item.url}}/>
               <View style={styles.description}>
                   <Text> Pizza: {item.title}</Text>
@@ -137,6 +142,133 @@ sign.navigationOptions = {
    )
   }
 }
+/*  Screen Administrador **************************************************************************************/
+
+class Modify extends React.Component {
+  state ={
+    loading: true,
+    datos: [],
+  }
+
+  constructor(props){
+    super(props)
+   this.fetchDatos()
+  }
+
+  fetchDatos = async()=>{
+    const response = await fetch('https://jsonplaceholder.typicode.com/photos')
+    const pre = await response.json()
+    const datos = pre.map(x=>({...x, key: x.id}))
+    this.setState({datos, loading: false})
+  }
+  render() {
+    const {loading,datos}=this.state
+    if(loading){
+      return (<View style={styles.containerLoad}>
+        <Text>Cargando ..</Text>
+        </View>
+      )
+    }
+
+    return(
+    <View style={styles.MenuContainer}>
+      <View style={styles.headerMenu}>
+        <TouchableHighlight style={styles.burguerBottom} onPress={this.props.navigation.openDrawer}>
+          <FontAwesome name='bars' size={35} color='black'/>
+        </TouchableHighlight>
+       </View>
+       <FlatList data={datos} renderItem={({item})=>
+          <View style={styles.itemRender}>
+              <Image style={{width: 100, height: 100}} source={{uri:item.url}}/>
+              <View style={styles.description}>
+                  <Text> Pizza: {item.title}</Text>
+                 <Button
+                  title="Modificar"
+                  />
+              </View>
+          </View>}/>
+               
+       </View>
+    )
+  }
+}
+class Add extends React.Component{
+  render(){
+    return(
+      <View style={styles.MenuContainer}>
+       <View style={styles.headerMenu}>
+        <TouchableHighlight style={styles.burguerBottom} onPress={this.props.navigation.openDrawer} >
+          <FontAwesome name='bars' size={35} color='black'/>
+        </TouchableHighlight>
+       </View>
+       <View>
+         <Text style={styles.MenuText}>Nueva Pizza</Text>
+       </View>
+       <View style={styles.logoContainer}>
+          <Image source={logo} style={styles.logo} />
+          <Text style={styles.logoText}> Añade un producto </Text>
+       </View>
+       <View style={styles.container}>
+          <TextInput style={styles.form} placeholder='Nombre de la pizza'/>
+          <TextInput style={styles.AddStyle} placeholder='Descripcion'/>
+
+          <TextInput style={{...styles.form, width:100 }} placeholder='Precio'/>
+          <TouchableHighlight style={styles.formButton} onPress={()=>navigation.navigate('Menu')}>
+              <Text style={styles.formText}> Añadir </Text>
+          </TouchableHighlight>
+        </View>
+      </View>
+    )
+  }
+}
+class Delete extends React.Component{
+  state ={
+    loading: true,
+    datos: [],
+  }
+
+  constructor(props){
+    super(props)
+   this.fetchDatos()
+  }
+
+  fetchDatos = async()=>{
+    const response = await fetch('https://jsonplaceholder.typicode.com/photos')
+    const pre = await response.json()
+    const datos = pre.map(x=>({...x, key: x.id}))
+    this.setState({datos, loading: false})
+  }
+  render() {
+    const {loading,datos}=this.state
+    if(loading){
+      return (<View style={styles.containerLoad}>
+        <Text>Cargando ..</Text>
+        </View>
+      )
+    }
+
+    return(
+    <View style={styles.MenuContainer}>
+      <View style={styles.headerMenu}>
+        <TouchableHighlight style={styles.burguerBottom} onPress={this.props.navigation.openDrawer} >
+          <FontAwesome name='bars' size={35} color='black'/>
+        </TouchableHighlight>
+       </View>
+       <FlatList data={datos} renderItem={({item})=>
+          <View style={styles.itemRender}>
+              <Image style={{width: 100, height: 100}} source={{uri:item.url}}/>
+              <View style={styles.description}>
+                  <Text> Pizza: {item.title}</Text>
+                 <Button
+                  title="Eliminar"
+                  />
+              </View>
+          </View>}/>            
+       </View>
+    )
+  }
+}
+
 /* ------------------------------> Seccion de React-Navigation */ 
   const AppNavigator  = createStackNavigator({
     Home:{
@@ -149,9 +281,18 @@ sign.navigationOptions = {
 
   const RootLog = createDrawerNavigator({
     Registro: AppNavigator,
+    Eliminar:{
+      screen: Delete
+    },
+    Añadir:{
+       screen: Add
+    },
+    Modificar:{
+      screen: Modify
+      },
     Menu:{
     screen: principal
-    }
+    },
   })
 
   export default createAppContainer(RootLog)
@@ -161,12 +302,31 @@ sign.navigationOptions = {
 /*  ------------------------------------------> StyleSheet*/
 
 styles = StyleSheet.create({
+   AddStyle:{
+    height:80,
+    width:300,
+    borderRadius:20,
+    marginVertical: 10,
+    padding: 15,
+    borderColor: 'black',
+    borderWidth: 2
+   },
+   AdminOptions: {
+    flex: 1,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    marginBottom: 10,
+    marginTop: 15
+   },
+   OptionsList:{
+    fontSize: 25,
+    color: 'blue'
+   },
    description:{
     flexDirection: 'column', 
     flex:1, 
     alignItems: 'center',
     justifyContent: 'space-around'
-
    },
    itemRender:{ 
      flex:1,
