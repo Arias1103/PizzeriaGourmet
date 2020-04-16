@@ -47,7 +47,6 @@ const sign =({navigation}) => {
        </View>
     </View>
   </ImageBackground>
-
   )
 }
 
@@ -115,7 +114,7 @@ sign.navigationOptions = {
     }
     const pressHandler = () => {
       Alert.alert('Pedido', 'Presiona aceptar si deseas pedir esta pizza',[
-      {text: 'Acpetar', onPress:()=>Alert.alert('Tu pedido esta en proceso')},
+      {text: 'Aceptar', onPress:()=>Alert.alert('Tu pedido esta en proceso')},
       {text: 'Cancelar', onPress:()=>Alert.alert('El pedido ha sido cancelado')}
     ])
     }
@@ -368,14 +367,14 @@ styles = StyleSheet.create({
  /* Estilos de logIn y Formulario */ 
  logoText:{
    color: 'black',
-   fontSize: 30,
+   fontSize: 25,
    fontWeight: '500',
    marginTop: 10,
    opacity: 0.5
  },
  logo:{
-   width: 200,
-   height: 200,
+   width: 150,
+   height: 150,
    borderRadius: 100
  },
  logoContainer:{
