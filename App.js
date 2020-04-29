@@ -12,13 +12,17 @@ import {
   FlatList,
   Button,
   Alert,
+  keyExtractor
 } from 'react-native';
+
+ import {ImagePicker} from 'react-native-imagepicker'
  import {createAppContainer} from 'react-navigation'
  import {createStackNavigator} from 'react-navigation-stack'
  import {FontAwesome} from '@expo/vector-icons'
-
+import {Camera, Permissions} from 'expo'
 import bgImage from './src/ImagePizza/backG4.jpeg'
 import logo from './src/ImagePizza/logo.jpeg'
+import product from './src/ImagePizza/Peperoni.jpeg'
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -101,7 +105,7 @@ sign.navigationOptions = {
    fetchDatos = async()=>{
      const response = await fetch('https://jsonplaceholder.typicode.com/photos')
      const pre = await response.json()
-     const datos = pre.map(x=>({...x, key: x.id}))
+     const datos = pre.map(x=> ({...x, key: String (x.id)}));
      this.setState({datos, loading: false})
    }
   render(){
@@ -129,10 +133,10 @@ sign.navigationOptions = {
         <Text style={styles.MenuText}> Elige tu pizza!! </Text>
           <FlatList data={datos} renderItem={({item})=>
           <TouchableOpacity style={styles.itemRender} onPress={()=> pressHandler()}>
-              <Image style={{width: 100, height: 100}} source={{uri:item.url}}/>
+              <Image source={product} style={{height: 100, width: 100}}/>
               <View style={styles.description}>
                   <Text> Pizza: {item.title}</Text>
-                  <Text> Ingredientes </Text>
+                  <Text> Ingredientes: Queso Mozarella y Peperoni </Text>
               </View>
           </TouchableOpacity>}/>
       </View>
@@ -157,7 +161,7 @@ class Modify extends React.Component {
   fetchDatos = async()=>{
     const response = await fetch('https://jsonplaceholder.typicode.com/photos')
     const pre = await response.json()
-    const datos = pre.map(x=>({...x, key: x.id}))
+    const datos = pre.map(x=> ({...x, key: String (x.id)}));
     this.setState({datos, loading: false})
   }
   render() {
@@ -177,8 +181,8 @@ class Modify extends React.Component {
         </TouchableHighlight>
        </View>
        <FlatList data={datos} renderItem={({item})=>
-          <View style={styles.itemRender}>
-              <Image style={{width: 100, height: 100}} source={{uri:item.url}}/>
+             <View style={styles.itemRender}>
+              <Image source={product} style={{height: 100, width: 100}}/>
               <View style={styles.description}>
                   <Text> Pizza: {item.title}</Text>
                  <Button
@@ -234,7 +238,7 @@ class Delete extends React.Component{
   fetchDatos = async()=>{
     const response = await fetch('https://jsonplaceholder.typicode.com/photos')
     const pre = await response.json()
-    const datos = pre.map(x=>({...x, key: x.id}))
+    const datos = pre.map(x=> ({...x, key: String (x.id)}));
     this.setState({datos, loading: false})
   }
   render() {
@@ -255,7 +259,7 @@ class Delete extends React.Component{
        </View>
        <FlatList data={datos} renderItem={({item})=>
           <View style={styles.itemRender}>
-              <Image style={{width: 100, height: 100}} source={{uri:item.url}}/>
+              <Image source={product} style={{height: 100, width: 100}}/>
               <View style={styles.description}>
                   <Text> Pizza: {item.title}</Text>
                  <Button
@@ -323,7 +327,7 @@ styles = StyleSheet.create({
    },
    description:{
     flexDirection: 'column', 
-    flex:1, 
+    flex:3, 
     alignItems: 'center',
     justifyContent: 'space-around'
    },
