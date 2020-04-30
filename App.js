@@ -1,6 +1,4 @@
-
-
-import React, { Component } from 'react';
+import React, {Component} from 'react'
 import {
   StyleSheet,
   View,
@@ -12,16 +10,14 @@ import {
   FlatList,
   Button,
   Alert,
-  keyExtractor
 } from 'react-native';
-
- import {ImagePicker} from 'react-native-imagepicker'
- import {createAppContainer} from 'react-navigation'
- import {createStackNavigator} from 'react-navigation-stack'
- import {FontAwesome} from '@expo/vector-icons'
-import {Camera, Permissions} from 'expo'
+import {createAppContainer} from 'react-navigation'
+import {createStackNavigator} from 'react-navigation-stack'
+import {FontAwesome} from '@expo/vector-icons'
+import {ImagePicker,Location,  Permissions} from 'expo'
 import bgImage from './src/ImagePizza/backG4.jpeg'
 import logo from './src/ImagePizza/logo.jpeg'
+import AddButton from './src/ImagePizza/Add.jpeg'
 import product from './src/ImagePizza/Peperoni.jpeg'
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -95,11 +91,19 @@ sign.navigationOptions = {
    state ={
      loading: true,
      datos: [],
+     Location: null,
+     errorMessage: null
    }
+
 
    constructor(props){
      super(props)
     this.fetchDatos()
+   }
+
+   getLocation = async()=>{
+     const{status} = await Permissions.askAsync(Permissions.LOCATION)
+     Alert.alert("Permisos para localizacion", status)
    }
 
    fetchDatos = async()=>{
@@ -117,7 +121,7 @@ sign.navigationOptions = {
       )
     }
     const pressHandler = () => {
-      Alert.alert('Pedido', 'Presiona aceptar si deseas pedir esta pizza',[
+      Alert.alert('Pedido', 'El pedido se realizara una vez que presione aceptar',[
       {text: 'Aceptar', onPress:()=>Alert.alert('Tu pedido esta en proceso')},
       {text: 'Cancelar', onPress:()=>Alert.alert('El pedido ha sido cancelado')}
     ])
@@ -130,13 +134,14 @@ sign.navigationOptions = {
        </TouchableHighlight>
      </View>
        <View>
-        <Text style={styles.MenuText}> Elige tu pizza!! </Text>
+        <Text style={styles.MenuText}> Elige tu pedido </Text>
           <FlatList data={datos} renderItem={({item})=>
-          <TouchableOpacity style={styles.itemRender} onPress={()=> pressHandler()}>
+          <TouchableOpacity style={styles.itemRender} 
+              onPress={this.getLocation} title='Solicitar ubicacion'>
               <Image source={product} style={{height: 100, width: 100}}/>
               <View style={styles.description}>
-                  <Text> Pizza: {item.title}</Text>
-                  <Text> Ingredientes: Queso Mozarella y Peperoni </Text>
+                  <Text> Pizza:{item.title}</Text>
+                  <Text> Ingredientes:Queso Mozarella y Peperoni </Text>
               </View>
           </TouchableOpacity>}/>
       </View>
@@ -196,6 +201,17 @@ class Modify extends React.Component {
   }
 }
 class Add extends React.Component{
+
+  state = {
+    photo: null
+  }
+
+  SelectPicture=async()=>{
+    await Permissions.askAsync(Permissions.CAMERA_ROLL)
+    const{ cancelled,uri} = await ImagePicker.launchImageLibraryAsync({aspect: 1, allowsEditing: true})
+    this.setState({photo: uri})
+
+  }
   render(){
     return(
       <View style={styles.MenuContainer}>
@@ -205,17 +221,20 @@ class Add extends React.Component{
         </TouchableHighlight>
        </View>
        <View>
-         <Text style={styles.MenuText}>Nueva Pizza</Text>
-       </View>
+         <Text style={{...styles.MenuText, backgroundColor:
+        '#FEE741', color: 'white'}}>Nuevo producto</Text>
+        </View>
        <View style={styles.logoContainer}>
-          <Image source={logo} style={styles.logo} />
+       <TouchableOpacity onPress={this.SelectPicture}>
+          <Image source={AddButton} style={styles.logo} />
+        </TouchableOpacity>
           <Text style={styles.logoText}> Añade un producto </Text>
        </View>
        <View style={styles.container}>
           <TextInput style={styles.form} placeholder='Nombre de la pizza'/>
           <TextInput style={styles.AddStyle} placeholder='Descripcion'/>
 
-          <TextInput style={{...styles.form, width:100 }} placeholder='Precio'/>
+          <TextInput style={{...styles.form, width:100, textAlign:'center' }} placeholder='Precio'/>
           <TouchableHighlight style={styles.formButton} onPress={()=>navigation.navigate('Menu')}>
               <Text style={styles.formText}> Añadir </Text>
           </TouchableHighlight>
