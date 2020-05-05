@@ -20,6 +20,7 @@
     "react-native-gesture-handler": "~1.5.0",
     "react-native-image-picker": "^2.3.1",
     "react-native-imagepicker": "^2.0.0",
+    "react-native-permissions": "^2.1.4",
     "react-native-reanimated": "~1.4.0",
     "react-native-safe-area-context": "0.6.0",
     "react-native-screens": "2.0.0-alpha.12",

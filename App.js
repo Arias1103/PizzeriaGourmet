@@ -11,16 +11,18 @@ import {
   Button,
   Alert,
 } from 'react-native';
+import * as Permissions from 'expo-permissions'
 import {createAppContainer} from 'react-navigation'
 import {createStackNavigator} from 'react-navigation-stack'
 import {FontAwesome} from '@expo/vector-icons'
-import {ImagePicker,Location,  Permissions} from 'expo'
+import * as Location from 'expo-location'
+import * as ImagePicker from 'expo-image-picker'
 import bgImage from './src/ImagePizza/backG4.jpeg'
 import logo from './src/ImagePizza/logo.jpeg'
 import AddButton from './src/ImagePizza/Add.jpeg'
 import product from './src/ImagePizza/Peperoni.jpeg'
-import { createDrawerNavigator } from 'react-navigation-drawer';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { createDrawerNavigator } from 'react-navigation-drawer'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 /* ------------- Seccion del LogIn*/
 
@@ -91,19 +93,13 @@ sign.navigationOptions = {
    state ={
      loading: true,
      datos: [],
-     Location: null,
-     errorMessage: null
+     location: null,
+     errorMessage: null,
    }
-
-
+   
    constructor(props){
      super(props)
     this.fetchDatos()
-   }
-
-   getLocation = async()=>{
-     const{status} = await Permissions.askAsync(Permissions.LOCATION)
-     Alert.alert("Permisos para localizacion", status)
    }
 
    fetchDatos = async()=>{
@@ -112,6 +108,15 @@ sign.navigationOptions = {
      const datos = pre.map(x=> ({...x, key: String (x.id)}));
      this.setState({datos, loading: false})
    }
+
+   getLocation = async()=>{
+    const{status} = await Permissions.askAsync(Permissions.LOCATION)
+    if (status !== "granted"){
+      return this.setState({errorMessage: "Los permisos no fueron aceptados"})
+    }
+    const location = await Location.getCurrentPositionAsync();
+    console.log("Loctaion", location)
+  }
   render(){
     const {loading,datos}=this.state
     if(loading){
@@ -120,12 +125,12 @@ sign.navigationOptions = {
         </View>
       )
     }
-    const pressHandler = () => {
+    /* const pressHandler = () => {
       Alert.alert('Pedido', 'El pedido se realizara una vez que presione aceptar',[
       {text: 'Aceptar', onPress:()=>Alert.alert('Tu pedido esta en proceso')},
       {text: 'Cancelar', onPress:()=>Alert.alert('El pedido ha sido cancelado')}
     ])
-    }
+    } */
    return ( 
   <ImageBackground source={bgImage} style={styles.MenuContainer}>
      <View style={styles.headerMenu}>
