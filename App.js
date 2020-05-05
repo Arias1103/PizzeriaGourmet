@@ -15,6 +15,7 @@ import * as Permissions from 'expo-permissions'
 import {createAppContainer} from 'react-navigation'
 import {createStackNavigator} from 'react-navigation-stack'
 import {FontAwesome} from '@expo/vector-icons'
+import Constants from 'expo-constants';
 import * as Location from 'expo-location'
 import * as ImagePicker from 'expo-image-picker'
 import bgImage from './src/ImagePizza/backG4.jpeg'
@@ -90,7 +91,7 @@ sign.navigationOptions = {
 
  /* -------------------------------------------------------------------------------------> Seccion de Menu */
  class principal extends React.Component{
-   state ={
+   state = { 
      loading: true,
      datos: [],
      location: null,
@@ -142,7 +143,7 @@ sign.navigationOptions = {
         <Text style={styles.MenuText}> Elige tu pedido </Text>
           <FlatList data={datos} renderItem={({item})=>
           <TouchableOpacity style={styles.itemRender} 
-              onPress={this.getLocation} title='Solicitar ubicacion'>
+              onPress={this.getLocation} title="Solicitar ubicacion">
               <Image source={product} style={{height: 100, width: 100}}/>
               <View style={styles.description}>
                   <Text> Pizza:{item.title}</Text>
@@ -208,15 +209,39 @@ class Modify extends React.Component {
 class Add extends React.Component{
 
   state = {
-    photo: null
+    image: null
   }
 
-  SelectPicture=async()=>{
-    await Permissions.askAsync(Permissions.CAMERA_ROLL)
-    const{ cancelled,uri} = await ImagePicker.launchImageLibraryAsync({aspect: 1, allowsEditing: true})
-    this.setState({photo: uri})
-
+  componentDidMount() {
+    this.getPermissionAsync();
   }
+
+  getPermissionAsync = async () => {
+    if (Constants.platform.ios) {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!');
+      }
+    }
+  };
+
+  pickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      if (!result.cancelled) {
+        this.setState({ image: result.uri });
+      }
+
+      console.log(result);
+    } catch (E) {
+      console.log(E);
+    }
+  };
   render(){
     return(
       <View style={styles.MenuContainer}>
@@ -230,7 +255,7 @@ class Add extends React.Component{
         '#FEE741', color: 'white'}}>Nuevo producto</Text>
         </View>
        <View style={styles.logoContainer}>
-       <TouchableOpacity onPress={this.SelectPicture}>
+       <TouchableOpacity onPress={this.pickImage}>
           <Image source={AddButton} style={styles.logo} />
         </TouchableOpacity>
           <Text style={styles.logoText}> Añade un producto </Text>
