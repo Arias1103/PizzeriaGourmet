@@ -54,7 +54,7 @@ const sign =({navigation}) => {
 }
 
 sign.navigationOptions = {
-  title: 'Bienvenuto',
+  title: 'Bienvenido',
     headerStyle: {
     backgroundColor: 'white'
   },
@@ -126,12 +126,6 @@ sign.navigationOptions = {
         </View>
       )
     }
-    /* const pressHandler = () => {
-      Alert.alert('Pedido', 'El pedido se realizara una vez que presione aceptar',[
-      {text: 'Aceptar', onPress:()=>Alert.alert('Tu pedido esta en proceso')},
-      {text: 'Cancelar', onPress:()=>Alert.alert('El pedido ha sido cancelado')}
-    ])
-    } */
    return ( 
   <ImageBackground source={bgImage} style={styles.MenuContainer}>
      <View style={styles.headerMenu}>
