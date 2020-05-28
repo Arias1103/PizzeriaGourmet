@@ -10,6 +10,7 @@ import {
   FlatList,
   Button,
   Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import * as Permissions from 'expo-permissions'
 import {createAppContainer} from 'react-navigation'
@@ -63,7 +64,10 @@ sign.navigationOptions = {
  /* ----------------------------------> Formulario de registro de usuario */
   const formulario =({navigation})=>{  
    return(
-    <View style={styles.container}> 
+     <KeyboardAvoidingView
+     style={{flex: 1}}
+     behavior="padding">
+    <View style={styles.container}>
       <View style={styles.logoContainer}>
           <Image source={logo} style={styles.logo} />
           <Text style={styles.logoText}>Hazlo Gourmet</Text>
@@ -80,11 +84,14 @@ sign.navigationOptions = {
               <TouchableHighlight style={styles.formButton} onPress={()=>navigation.navigate('Menu')}>
                  <Text style={styles.formText}> Entrar </Text>
               </TouchableHighlight>
+             
           </View>
      </View>
+     </KeyboardAvoidingView>
+ 
    )
   }
-
+   
    formulario.navigationOptions ={
    title: 'Registro'
  }
@@ -104,10 +111,11 @@ sign.navigationOptions = {
    }
 
    fetchDatos = async()=>{
-     const response = await fetch('https://jsonplaceholder.typicode.com/photos')
-     const pre = await response.json()
-     const datos = pre.map(x=> ({...x, key: String (x.id)}));
-     this.setState({datos, loading: false})
+     const response = await fetch('http://192.168.20.195:5003/Api/Product');
+     const pre = await response.json();
+     const datos = pre.map(x=> ({...x, key:(x.id)}));
+     this.setState({datos, loading: false});
+     console.log(datos);
    }
 
    getLocation = async()=>{
@@ -138,10 +146,10 @@ sign.navigationOptions = {
           <FlatList data={datos} renderItem={({item})=>
           <TouchableOpacity style={styles.itemRender} 
               onPress={this.getLocation} title="Solicitar ubicacion">
-              <Image source={product} style={{height: 100, width: 100}}/>
+              <Image source={{uri: `data:image/png;base64,${item.image}`}} style={{height: 100, width: 100}}/>
               <View style={styles.description}>
-                  <Text> Pizza:{item.title}</Text>
-                  <Text> Ingredientes:Queso Mozarella y Peperoni </Text>
+                  <Text> Pizza:{item.name}</Text>
+                  <Text> Ingredientes:{item.description} </Text>
               </View>
           </TouchableOpacity>}/>
       </View>
@@ -164,9 +172,9 @@ class Modify extends React.Component {
   }
 
   fetchDatos = async()=>{
-    const response = await fetch('https://jsonplaceholder.typicode.com/photos')
+    const response = await fetch('http://192.168.20.195:5003/Api/Product')
     const pre = await response.json()
-    const datos = pre.map(x=> ({...x, key: String (x.id)}));
+    const datos = pre.map(x=> ({...x, key:  (x.id)}));
     this.setState({datos, loading: false})
   }
   render() {
@@ -187,9 +195,10 @@ class Modify extends React.Component {
        </View>
        <FlatList data={datos} renderItem={({item})=>
              <View style={styles.itemRender}>
-              <Image source={product} style={{height: 100, width: 100}}/>
+              <Image source={{uri: `data:image/png;base64,${item.image}`}} style={{height: 100, width: 100}}/>
               <View style={styles.description}>
-                  <Text> Pizza: {item.title}</Text>
+                  <Text> Pizza: {item.name}</Text>
+                  <Text> Ingredientes:{item.description} </Text>
                  <Button
                   title="Modificar"
                   />
@@ -203,7 +212,7 @@ class Modify extends React.Component {
 class Add extends React.Component{
 
   state = {
-    image: null
+    photo: null
   }
 
   componentDidMount() {
@@ -214,7 +223,7 @@ class Add extends React.Component{
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!');
+        alert('se necesita el permiso, para usar la galeria!');
       }
     }
   };
@@ -227,17 +236,21 @@ class Add extends React.Component{
         aspect: [4, 3],
         quality: 1,
       });
-      if (!result.cancelled) {
-        this.setState({ image: result.uri });
+      if (result.uri) {
+        this.setState({ photo: result});
       }
 
-      console.log(result);
+      console.log("result", result);
     } catch (E) {
       console.log(E);
     }
   };
   render(){
+    const {photo} = this.state
     return(
+      <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior="padding">
       <View style={styles.MenuContainer}>
        <View style={styles.headerMenu}>
         <TouchableHighlight style={styles.burguerBottom} onPress={this.props.navigation.openDrawer} >
@@ -246,15 +259,19 @@ class Add extends React.Component{
        </View>
        <View>
          <Text style={{...styles.MenuText, backgroundColor:
-        '#FEE741', color: 'white'}}>Nuevo producto</Text>
+        'gray', color: 'white'}}>Nuevo producto</Text>
         </View>
        <View style={styles.logoContainer}>
-       <TouchableOpacity onPress={this.pickImage}>
-          <Image source={AddButton} style={styles.logo} />
-        </TouchableOpacity>
-          <Text style={styles.logoText}> Añade un producto </Text>
+          {photo && (
+            <Image 
+            source={{uri: photo.uri}}
+            style={{height: 250, width: 250, borderRadius: 35}} 
+            />
+            )
+          }
        </View>
        <View style={styles.container}>
+       <Button title= " Seleccionar una foto" onPress={this.pickImage}/>
           <TextInput style={styles.form} placeholder='Nombre de la pizza'/>
           <TextInput style={styles.AddStyle} placeholder='Descripcion'/>
 
@@ -264,6 +281,7 @@ class Add extends React.Component{
           </TouchableHighlight>
         </View>
       </View>
+      </KeyboardAvoidingView>
     )
   }
 }
@@ -279,9 +297,9 @@ class Delete extends React.Component{
   }
 
   fetchDatos = async()=>{
-    const response = await fetch('https://jsonplaceholder.typicode.com/photos')
+    const response = await fetch('http://192.168.20.195:5003/Api/Product')
     const pre = await response.json()
-    const datos = pre.map(x=> ({...x, key: String (x.id)}));
+    const datos = pre.map(x=> ({...x, key: (x.id)}));
     this.setState({datos, loading: false})
   }
   render() {
@@ -304,7 +322,7 @@ class Delete extends React.Component{
           <View style={styles.itemRender}>
               <Image source={product} style={{height: 100, width: 100}}/>
               <View style={styles.description}>
-                  <Text> Pizza: {item.title}</Text>
+                  <Text> Pizza: {item.name}</Text>
                  <Button
                   title="Eliminar"
                   />
